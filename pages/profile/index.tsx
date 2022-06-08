@@ -3,7 +3,7 @@
 import type {NextPage} from 'next'
 
 import nfts from "../../content/meta.json";
-import {NftMeta} from '../../types/nft';
+import {NftMeta} from '@_types/nft';
 
 const tabs = [
     {name: 'Your Collection', href: '#', current: true},
