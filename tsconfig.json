@@ -18,7 +18,9 @@
     "paths": {
       "@ui": ["components/ui"],
       "@ui/*": ["components/ui/*"],
-      "@_types/*": ["types/*"]
+      "@_types/*": ["types/*"],
+      "@providers": ["components/providers"],
+      "@providers/*": ["components/providers/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
