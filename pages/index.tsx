@@ -5,16 +5,27 @@ import { NftMeta } from '@_types/nft';
 import { useWeb3 } from '@providers/web3';
 
 const Home: NextPage = () => {
-    const { ethereum, provider, isLoading, contract } = useWeb3();
+    const { provider, contract } = useWeb3();
 
-    if (provider) {
-        provider.listAccounts();
+    const getNftInfo = async () => {
+        console.log(await contract!.name());
+        console.log(await contract!.symbol());
+    }
+
+    if (contract) {
+        getNftInfo();
     }
 
     const getAccounts = async () => {
         const account = await provider!.listAccounts();
         console.log(account[0])
     }
+
+    if (provider) {
+        provider.listAccounts();
+    }
+
+
     return (
         <div className="relative pt-16 pb-20 px-4 sm:px-6 lg:pt-24 lg:pb-28 lg:px-8">
 
