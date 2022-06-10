@@ -3,12 +3,14 @@ import {Contract, providers, ethers} from "ethers";
 import {Web3Dependencies} from "@_types/hooks";
 import {setupHooks, Web3Hooks} from "@hooks/web3/setupHooks";
 
+// include MetaMask provider
 declare global {
     interface Window {
         ethereum: MetaMaskInpageProvider;
     }
 }
 
+// type for State
 type Nullable<T> = {
     [P in keyof T]: T[P] | null;
 }
@@ -27,7 +29,9 @@ export const createDefaultState = () => {
         hooks: setupHooks({} as any),
     }
 }
+//
 
+// функция которая будет возвращать набор обектов а так же передает hooks
 export const createWeb3State = ({
     ethereum, provider, contract, isLoading
                                 }:Web3Dependencies & { isLoading: boolean } ) => {
@@ -40,6 +44,7 @@ export const createWeb3State = ({
     }
 }
 
+// load contracts
 const NETWORK_ID = process.env.NEXT_PUBLIC_NETWORK_ID;
 
 export const loadContract = async (
