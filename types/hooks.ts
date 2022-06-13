@@ -1,21 +1,24 @@
 import { MetaMaskInpageProvider } from "@metamask/providers";
-import { Contract, providers } from "ethers";
-import {SWRResponse} from "swr";
+import { Contract, providers } from "ethers"
+import { SWRResponse } from "swr";
 
-// set dependencies for web object
+
 export type Web3Dependencies = {
-    provider: providers.Web3Provider;
-    contract: Contract;
-    ethereum: MetaMaskInpageProvider;
+  provider: providers.Web3Provider;
+  contract: Contract;
+  ethereum: MetaMaskInpageProvider;
+  isLoading: boolean;
 }
 
-// export type params and response
-export type CryptoHookFactory<D = any, P = any> = {
-    (d: Partial<Web3Dependencies>): CryptoHandlerHook<D, P>
+export type CryptoHookFactory<D = any, R = any, P = any> = {
+  (d: Partial<Web3Dependencies>): CryptoHandlerHook<D, R, P>
 }
 
-// response for function must be CryptoHookSWRResponse params must be any type and response must be any type
-export type CryptoHandlerHook<D = any, P = any> = (params: P) => CryptoHookSWRResponse<D>
+export type CryptoHandlerHook<D = any, R = any, P = any> = (params?: P) => CryptoSWRResponse<D, R>
 
-// set type response from SWRResponse and set params as we expect any data type
-export type CryptoHookSWRResponse<D = any> = SWRResponse<D>;
+export type CryptoSWRResponse<D = any, R = any> = SWRResponse<D> & R;
+
+
+// export type CryptoHookFactory<D = any, P = any> = {
+//   (d: Partial<Web3Dependencies>): (params: P) => SWRResponse<D>
+// }
