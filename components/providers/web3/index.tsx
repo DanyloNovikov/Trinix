@@ -1,6 +1,11 @@
-import { createContext, FunctionComponent, useContext, useEffect, useState } from "react"
+import { createContext, ReactNode, FunctionComponent, useContext, useEffect, useState } from "react"
 import { createDefaultState, createWeb3State, loadContract, Web3State } from "./utils";
+import { MetaMaskInpageProvider } from "@metamask/providers";
 import { ethers } from "ethers";
+
+interface Web3Props {
+  children?: ReactNode;
+}
 
 const pageReload = () => {
     window.location.reload();
@@ -23,7 +28,7 @@ const removeGlobalListeners = (ethereum: MetaMaskInpageProvider) => {
 
 const Web3Context = createContext<Web3State>(createDefaultState());
 
-const Web3Provider: FunctionComponent = ({children}) => {
+const Web3Provider: FunctionComponent<Web3Props> = ({children}) => {
   const [web3Api, setWeb3Api] = useState<Web3State>(createDefaultState());
 
   useEffect(() => {
