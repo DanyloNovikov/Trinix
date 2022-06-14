@@ -84,7 +84,7 @@ contract('NftMarket', accounts => {
         const tokenURI = 'https://test.com/second-token'
         before(async () => {
             await _contract.mintToken(tokenURI, _nftPrice, {
-                from: account[0],
+                from: accounts[0],
                 value: _listingPrice
             });
         });
@@ -99,6 +99,11 @@ contract('NftMarket', accounts => {
             const secondNftId  = await _contract.tokenByIndex(1);
             assert.equal(firstNftId.toNumber(), 1, 'Nft id is wrong');
             assert.equal(secondNftId.toNumber(), 2, 'Nft id is wrong');
+        });
+
+        it('Should have two NFTs created', async () => {
+            const allNfts = await _contract.getAllNftsOnSale();
+            assert.equal(allNfts[0].tokenId, 2, 'Nft has wrong id');
         });
     });
 });
