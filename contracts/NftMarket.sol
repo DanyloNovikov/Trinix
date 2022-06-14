@@ -22,6 +22,14 @@ contract NftMarket is ERC721URIStorage {
     mapping(string => bool) private _usedTokenURIs;
     mapping(uint => NftItem) private _idToNftItem;
 
+    // Save all tokens ids.
+    uint[] private _allNfts;
+
+    // for quick search token id into array it`s need
+    // becase all iterations const money mapping fix it
+    // he do not get money when he searching.
+    mapping(uint => uint) private _idToNftIndex;
+
     event NftItemCreated (
         uint tokenId,
         uint price,
@@ -41,6 +49,15 @@ contract NftMarket is ERC721URIStorage {
 
     function tokenURIExists(string memory tokenURI) public view returns (bool) {
         return _usedTokenURIs[tokenURI] == true;
+    }
+
+    function totalSupply() public view returns (uint) {
+        return _allNfts.length;
+    }
+
+    function tokenByIndex(uint index) public view returns (uint) {
+        require(index < totalSupply(), 'Index out of bounds');
+        return _allNfts[index];
     }
 
     // tokenURI we will save our nft link to db(piniata)
@@ -89,5 +106,19 @@ contract NftMarket is ERC721URIStorage {
         );
 
         emit NftItemCreated(tokenId, price, msg.sender, true);
+    }
+
+    // Iternal overide it`s means we override our function from ERC721
+    function _beforeTokenTransfer(address from, address to, uint tokenId) internal virtual override {
+        super._beforeTokenTransfer(from, to, tokenId);
+
+        if (from == address(0)) {
+            _addTokenToAllTokensEnumaration(tokenId);
+        }
+    }
+
+    function _addTokenToAllTokensEnumaration(uint tokenId) private {
+        _idToNftIndex[tokenId] = _allNfts.length;
+        _allNfts.push(tokenId);
     }
 }
