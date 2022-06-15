@@ -15,20 +15,20 @@ contract NftMarket is ERC721URIStorage {
     }
 
     uint public listingPrice = 0.025 ether;
-
+    
     Counters.Counter private _listedItems;
     Counters.Counter private _tokenIds;
 
     mapping(string => bool) private _usedTokenURIs;
     mapping(uint => NftItem) private _idToNftItem;
-
-    // Save all tokens ids.
-    uint[] private _allNfts;
-
     // for quick search token id into array it`s need
     // becase all iterations const money mapping fix it
     // he do not get money when he searching.
     mapping(uint => uint) private _idToNftIndex;
+    mapping(address => mapping(uint => uint)) private _ownedTokens;
+    mapping(uint => uint) private _idToOwnedIndex;
+    // Save all tokens ids.
+    uint[] private _allNfts;
 
     event NftItemCreated (
         uint tokenId,
@@ -55,6 +55,11 @@ contract NftMarket is ERC721URIStorage {
         return _allNfts.length;
     }
 
+    function tokenOfOwnerByIndex(address owner, uint index) public view returns (uint) {
+        require(index < ERC721.balanceOf(owner), 'Index out of bounds');
+        return _ownedTokens[owner][index];
+    }
+
     function tokenByIndex(uint index) public view returns (uint) {
         require(index < totalSupply(), 'Index out of bounds');
         return _allNfts[index];
@@ -74,6 +79,19 @@ contract NftMarket is ERC721URIStorage {
                 items[currentIndex] = item;
                 currentIndex += 1;
             }
+        }
+
+        return items;
+    }
+
+    function getOwnedNfts() public view returns (NftItem[] memory) {
+        uint ownedItemsCount = ERC721.balanceOf(msg.sender);
+        NftItem[] memory items = new NftItem[](ownedItemsCount);
+
+        for (uint i = 0; i < ownedItemsCount; i++) {
+            uint tokenId = tokenOfOwnerByIndex(msg.sender, i);
+            NftItem storage item = _idToNftItem[tokenId];
+            items[i] = item;
         }
 
         return items;
@@ -132,12 +150,23 @@ contract NftMarket is ERC721URIStorage {
         super._beforeTokenTransfer(from, to, tokenId);
 
         if (from == address(0)) {
-            _addTokenToAllTokensEnumaration(tokenId);
+            _addTokenToAllTokensEnumeration(tokenId);
+        }
+
+        if (from == address(0)) {
+            _addTokenToOwnerEnumeration(to, tokenId);
         }
     }
 
-    function _addTokenToAllTokensEnumaration(uint tokenId) private {
+    function _addTokenToAllTokensEnumeration(uint tokenId) private {
         _idToNftIndex[tokenId] = _allNfts.length;
-        _allNfts.push(tokenId);
+        _allNfts.push(tokenId); 
+    }
+
+    function _addTokenToOwnerEnumeration(address to, uint tokenId) private {
+        // its special function from the librare ERC721 ho check how many into user account
+        uint length = ERC721.balanceOf(to);
+        _ownedTokens[to][length] = tokenId;
+        _idToOwnedIndex[tokenId] = length;
     }
 }
