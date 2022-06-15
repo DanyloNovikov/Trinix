@@ -58,18 +58,10 @@ contract('NftMarket', accounts => {
 
     describe("Buy NFT token", () => {
         before(async () => {
-            const ownedNfts1 = await _contract.getOwnedNfts({from: accounts[0]});
-            console.log(ownedNfts1)
-            const ownedNfts2 = await _contract.getOwnedNfts({from: accounts[1]});
-            console.log(ownedNfts2)
             await _contract.buyNft(1, {
                 from: accounts[1],
                 value: _nftPrice
             });
-            const ownedNfts3 = await _contract.getOwnedNfts({from: accounts[0]});
-            console.log(ownedNfts3)
-            const ownedNfts4 = await _contract.getOwnedNfts({from: accounts[1]});
-            console.log(ownedNfts4)
         });
 
         it('Should unlist the item', async () => {
@@ -95,7 +87,6 @@ contract('NftMarket', accounts => {
                 from: accounts[0],
                 value: _listingPrice
             });
-
         });
 
         it('Should have two NFTs created', async () => {
@@ -123,6 +114,43 @@ contract('NftMarket', accounts => {
         it("account[0] should have one owned NFT", async () => {
             const ownedNfts = await _contract.getOwnedNfts({from: accounts[0]});
             assert.equal(ownedNfts[0].tokenId, 2, "Nft has a wrong id");
+        });
+    });
+
+    describe('Token transfer to new owener', async () => {
+        before(async () => {
+            await _contract.transferFrom(accounts[0], accounts[1], 2);
+        });
+
+        it('Account[0] should own 0 tokens', async () => {
+            const ownedNfts = await _contract.getOwnedNfts({from: accounts[0]});
+            assert.equal(ownedNfts.length, 0, 'Invalid length of tokens');
+        });
+
+        it('Account[1] should own 2 tokens', async () => {
+            const ownedNfts = await _contract.getOwnedNfts({from: accounts[1]});
+            assert.equal(ownedNfts.length, 2, 'Invalid length of tokens');
+        });
+    });
+
+    describe('Burn token', async () => {
+        const tokenURI = 'https://test.com/third-token'
+        before(async () => {
+            await _contract.mintToken(tokenURI, _nftPrice, {
+                from: accounts[2],
+                value: _listingPrice
+            });
+        });
+
+        it('Account[0] should own 0 tokens', async () => {
+            const ownedNfts = await _contract.getOwnedNfts({from: accounts[2]});
+            assert.equal(ownedNfts[0].tokenId, 3, 'Invalid length of tokens');
+        });
+
+        it('Account[0] should have owned 0 NFTs', async () => {
+            await _contract.burnToken(3, {from: accounts[2]});
+            const ownedNfts = await _contract.getOwnedNfts({from: accounts[2]});
+            assert.equal(ownedNfts.length, 0, 'Invalid length of tokens');
         });
     });
 });
