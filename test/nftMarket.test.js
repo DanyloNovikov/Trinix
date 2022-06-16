@@ -133,24 +133,35 @@ contract('NftMarket', accounts => {
         });
     });
 
-    describe('Burn token', async () => {
-        const tokenURI = 'https://test.com/third-token'
+    describe('List an NFT', async () => {
         before(async () => {
-            await _contract.mintToken(tokenURI, _nftPrice, {
-                from: accounts[2],
-                value: _listingPrice
-            });
+            await _contract.placeNftOnSale(1, _nftPrice, { from: accounts[1], value: _listingPrice } );
         });
 
-        it('Account[0] should own 0 tokens', async () => {
-            const ownedNfts = await _contract.getOwnedNfts({from: accounts[2]});
-            assert.equal(ownedNfts[0].tokenId, 3, 'Invalid length of tokens');
+        it('Account[1] should have owned 2 NFTs', async () => {
+            const ownedNfts = await _contract.getAllNftsOnSale();
+            assert.equal(ownedNfts.length, 2, 'Invalid length of nfts');
         });
 
-        it('Account[0] should have owned 0 NFTs', async () => {
-            await _contract.burnToken(3, {from: accounts[2]});
-            const ownedNfts = await _contract.getOwnedNfts({from: accounts[2]});
-            assert.equal(ownedNfts.length, 0, 'Invalid length of tokens');
+        it('Account[1] should have owned 2 NFTs', async () => {
+            const ownedNfts = await _contract.getOwnedNfts({from: accounts[1]});
+            assert.equal(ownedNfts[0].isListed, true, 'Invalid length of tokens');
+        });
+    });
+
+    describe('Change listing price', async () => {
+        it('Try set new Price be not owner', async () => {
+            try {
+                await _contract.setListingPrice({from: accounts[1]});
+            } catch (error) {
+                assert(true, error);
+            }
+        });
+
+        it('Only contract owner can change ListPrice', async () => {
+            await _contract.setListingPrice(_listingPrice, {from: accounts[0]});
+            const listingPrice = await _contract.listingPrice();
+            assert.equal(listingPrice.toString(), _listingPrice, 'Invalid change price');
         });
     });
 });
