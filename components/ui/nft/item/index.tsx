@@ -1,8 +1,8 @@
 import {FunctionComponent } from 'react';
-import { NftMeta } from '../../../../types/nft';
+import { Nft } from '@_types/nft';
 
 type NftItemProps = {
-    nft: NftMeta;
+    nft: Nft
 }
 
 const NftItem: FunctionComponent<NftItemProps> = ({nft}) => {
@@ -11,8 +11,8 @@ const NftItem: FunctionComponent<NftItemProps> = ({nft}) => {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
                 className={`h-full w-full object-cover`}
-                src={nft.image}
-                alt={nft.name}
+                src={nft.meta.image}
+                alt={nft.meta.name}
             />
         </div>
         <div className="flex-1 bg-white p-6 flex flex-col justify-between">
@@ -21,8 +21,8 @@ const NftItem: FunctionComponent<NftItemProps> = ({nft}) => {
                     Creatures NFT
                 </p>
                 <div className="block mt-2">
-                    <p className="text-xl font-semibold text-gray-900">{nft.name}</p>
-                    <p className="mt-3 mb-3 text-base text-gray-500">{nft.description}</p>
+                    <p className="text-xl font-semibold text-gray-900">{nft.meta.name}</p>
+                    <p className="mt-3 mb-3 text-base text-gray-500">{nft.meta.description}</p>
                 </div>
             </div>
             <div className="overflow-hidden mb-4">
@@ -33,11 +33,11 @@ const NftItem: FunctionComponent<NftItemProps> = ({nft}) => {
                             <div className="flex justify-center items-center">
                                 100
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                                 <img className="h-6" src="/images/small-eth.webp" alt={nft.name}/>
+                                 <img className="h-6" src="/images/small-eth.webp" alt={nft.meta.name}/>
                             </div>
                         </dd>
                     </div>
-                    { nft.attributes.map(attribute =>
+                    { nft.meta.attributes.map(attribute =>
                         <div key={attribute.trait_type} className="flex flex-col px-4 pt-4">
                             <dt className="order-2 text-sm font-medium text-gray-500">
                                 {attribute.trait_type}

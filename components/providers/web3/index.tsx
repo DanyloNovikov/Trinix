@@ -2,6 +2,7 @@ import { createContext, ReactNode, FunctionComponent, useContext, useEffect, use
 import { createDefaultState, createWeb3State, loadContract, Web3State } from "./utils";
 import { MetaMaskInpageProvider } from "@metamask/providers";
 import { ethers } from "ethers";
+import { NftMarketContract } from "@_types/nftMarketContract";
 
 interface Web3Props {
   children?: ReactNode;
@@ -37,12 +38,15 @@ const Web3Provider: FunctionComponent<Web3Props> = ({children}) => {
         const provider = new ethers.providers.Web3Provider(window.ethereum as any);
         const contract =  await loadContract("NftMarket", provider);
 
+        const signer = provider.getSigner();
+        const signedContract = contract.connect(signer);
+
         setGlobalListeners(window.ethereum);
 
         setWeb3Api(createWeb3State({
           ethereum: window.ethereum,
           provider,
-          contract,
+          contract: signedContract as unknown as NftMarketContract,
           isLoading: false
         }))
       } catch(e: any) {
