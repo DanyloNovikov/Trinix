@@ -1,10 +1,7 @@
 import type { NextPage } from 'next';
 import { NftList } from '@ui';
-import { useListedNfts } from '@hooks/web3';
-import { Nft } from '@_types/nft'
 
 const Home: NextPage = () => {
-    const { nfts } = useListedNfts();
 
     return (
         <div className="relative pt-16 pb-20 px-4 sm:px-6 lg:pt-24 lg:pb-28 lg:px-8">
@@ -20,9 +17,7 @@ const Home: NextPage = () => {
                         Mint a NFT to get unlimited ownership forever!
                     </p>
                 </div>
-                <NftList 
-                    nfts={nfts.data as Nft[]}
-                />
+                <NftList/>
             </div>
         </div>
     )

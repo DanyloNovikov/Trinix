@@ -2,10 +2,11 @@ import {FunctionComponent } from 'react';
 import { Nft } from '@_types/nft';
 
 type NftItemProps = {
-    nft: Nft
+    nft: Nft;
+    buyNft: (token: number, value: number) => Promise<void>;
 }
 
-const NftItem: FunctionComponent<NftItemProps> = ({nft}) => {
+const NftItem: FunctionComponent<NftItemProps> = ({nft, buyNft}) => {
     return <>
         <div className="flex-shrink-0">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -51,6 +52,9 @@ const NftItem: FunctionComponent<NftItemProps> = ({nft}) => {
             </div>
             <div>
                 <button
+                    onClick={() => {
+                        buyNft(nft.tokenId, nft.price)
+                    }}
                     type="button"
                     className="disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:cursor-not-allowed mr-2 inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
