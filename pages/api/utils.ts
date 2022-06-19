@@ -1,12 +1,13 @@
 import { ethers } from "ethers";
-import { withIronSessionApiRoute } from "iron-session/next";
+import { withIronSession, Session } from "next-iron-session";
 import * as util from "ethereumjs-util";
 import { NextApiRequest, NextApiResponse } from "next";
 import contract from "../../public/contracts/NftMarket.json";
 import { NftMarketContract } from "@_types/nftMarketContract";
 
 const NETWORKS = {
-  "5777": "Ganache"
+  "5777": "Ganache",
+  "3": "Ropsten"
 }
 
 type NETWORK = typeof NETWORKS;
@@ -19,7 +20,7 @@ export const pinataApiKey = process.env.PINATA_API_KEY as string;
 export const pinataApiSecret = process.env.PINATA_API_SECRECT as string;
 
 export function withSession(handler: any) {
-  return withIronSessionApiRoute(handler, {
+  return withIronSession(handler, {
     password: process.env.SECRET_COOKIE_PASSWORD as string,
     cookieName: "nft-auth-session",
     cookieOptions: {
@@ -28,10 +29,14 @@ export function withSession(handler: any) {
   })
 }
 
-export const addressCheckMiddleware = async (req: NextApiRequest, res: NextApiResponse) => {
+const url = process.env.NODE_ENV === "production" ? 
+  process.env.INFURA_ROPSTEN_URL :
+  "http://127.0.0.1:7545"
+
+export const addressCheckMiddleware = async (req: NextApiRequest & { session: Session}, res: NextApiResponse) => {
   return new Promise( async (resolve, reject) => {
-    const message = req.session.user["message-session"];
-    const provider = new ethers.providers.JsonRpcProvider("HTTP://127.0.0.1:7545");
+    const message = req.session.get("message-session");
+    const provider = new ethers.providers.JsonRpcProvider(url);
     const contract = new ethers.Contract(contractAddress, abi, provider) as unknown as NftMarketContract;
 
     

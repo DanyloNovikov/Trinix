@@ -1,11 +1,12 @@
 import { v4 as uuidv4 } from "uuid";
 import { FileReq } from "@_types/nft";
 import { NextApiRequest, NextApiResponse } from "next";
+import { Session } from "next-iron-session";
 import { addressCheckMiddleware, pinataApiKey, pinataApiSecret, withSession } from "./utils";
 import FormData from 'form-data';
 import axios from "axios";
 
-export default withSession(async (req: NextApiRequest, res: NextApiResponse) => {
+export default withSession(async (req: NextApiRequest & { session: Session}, res: NextApiResponse) => {
     if (req.method === "POST") {
         const { bytes, fileName, contentType } = req.body as FileReq;
 

@@ -1,10 +1,11 @@
 import { v4 as uuidv4 } from "uuid";
+import { Session } from "next-iron-session";
 import { NextApiRequest, NextApiResponse } from "next";
 import { withSession, contractAddress, addressCheckMiddleware, pinataApiKey, pinataApiSecret } from "./utils";
 import { NftMeta } from "@_types/nft";
 import axios from "axios";
 
-export default withSession(async (req: NextApiRequest, res: NextApiResponse) =>  {
+export default withSession(async (req: NextApiRequest & {session: Session}, res: NextApiResponse) =>  {
     if (req.method === "POST") {
         try {
             const { body } = req;
@@ -35,7 +36,7 @@ export default withSession(async (req: NextApiRequest, res: NextApiResponse) => 
     } else if (req.method === "GET") {
         try {
             const message = { contractAddress, id: uuidv4() };
-            req.session.user = { "message-session": message };
+            req.session.set("message-session", message);
             await req.session.save();
       
             return res.json(message);
