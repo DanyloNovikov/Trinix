@@ -6,7 +6,6 @@ export type NftAttributes = {
 }
 
 export type NftMeta = {
-    id: number;
     name: string;
     description: string;
     image: string;
