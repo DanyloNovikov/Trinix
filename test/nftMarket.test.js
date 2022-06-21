@@ -5,6 +5,8 @@ contract('NftMarket', accounts => {
     let _contract = null;
     let _nftPrice = ethers.utils.parseEther('0.3').toString();
     let _listingPrice = ethers.utils.parseEther('0.025').toString();
+    let _totalBalance = ethers.utils.parseEther('0.075').toString();
+
 
     before(async () => {
         _contract = await NftMarket.deployed();
@@ -149,7 +151,7 @@ contract('NftMarket', accounts => {
         });
     });
 
-    describe('Change listing price', async () => {
+    describe('Admin/Owner options', async () => {
         it('Try set new Price be not owner', async () => {
             try {
                 await _contract.setListingPrice({from: accounts[1]});
@@ -162,6 +164,35 @@ contract('NftMarket', accounts => {
             await _contract.setListingPrice(_listingPrice, {from: accounts[0]});
             const listingPrice = await _contract.listingPrice();
             assert.equal(listingPrice.toString(), _listingPrice, 'Invalid change price');
+        });
+
+        it('Try get total palance how account[1]', async () => {
+            try {
+                await _contract.getTotalBalance({from: accounts[1]});
+            } catch (error) {
+                assert(true, error);
+            }
+        });
+
+        it('Only contract owner can see totalBalance', async () => {
+            const totalBalance = await _contract.getTotalBalance({from: accounts[0]});
+            assert.equal(totalBalance.toString(), _totalBalance, 'Invalid change price');
+        });
+
+        it('!owner try get money from contract', async () => {
+            try {
+                await _contract.getMoneyFromPlatform( 0.025, {from: accounts[1]});
+            } catch (error) {
+                assert(true, error);
+            }
+        });
+
+        it('owner try get money from contract', async () => {
+            const oldCountEtherContract = await _contract.getTotalBalance({from: accounts[0]}); 
+            await _contract.getMoneyFromPlatform(_listingPrice, {from: accounts[0]});
+            const newCountEtherContarct = await  _contract.getTotalBalance({from: accounts[0]});
+
+            assert.equal(newCountEtherContarct, oldCountEtherContract - _listingPrice , 'error geting money');
         });
     });
 });

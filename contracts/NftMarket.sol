@@ -68,6 +68,14 @@ contract NftMarket is ERC721URIStorage, Ownable {
         return _usedTokenURIs[tokenURI] == true;
     }
 
+    function  getTotalBalance() onlyOwner external view returns (uint) {
+        return address(this).balance;
+    }
+
+    function getMoneyFromPlatform(uint takenSum) onlyOwner external payable {    
+        payable(owner()).transfer(takenSum);
+    }
+
     // sum all selled nft
     function totalSupply() public view returns (uint) {
         return _allNfts.length;

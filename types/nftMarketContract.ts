@@ -90,6 +90,8 @@ export type NftMarketContractMethodNames =
   | 'getNftItem'
   | 'listedItemsCount'
   | 'tokenURIExists'
+  | 'getTotalBalance'
+  | 'getMoneyFromPlatform'
   | 'totalSupply'
   | 'tokenOfOwnerByIndex'
   | 'tokenByIndex'
@@ -370,6 +372,24 @@ export interface NftMarketContract {
     tokenURI: string,
     overrides?: ContractCallOverrides
   ): Promise<boolean>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   */
+  getTotalBalance(overrides?: ContractCallOverrides): Promise<BigNumber>;
+  /**
+   * Payable: true
+   * Constant: false
+   * StateMutability: payable
+   * Type: function
+   * @param takenSum Type: uint256, Indexed: false
+   */
+  getMoneyFromPlatform(
+    takenSum: BigNumberish,
+    overrides?: ContractTransactionOverrides
+  ): Promise<ContractTransaction>;
   /**
    * Payable: false
    * Constant: true
