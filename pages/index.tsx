@@ -1,7 +1,7 @@
 import type { NextPage } from 'next';
-import { NftList } from '@ui';
 import { useNetwork } from '@hooks/web3';
 import { ExclamationIcon } from '@heroicons/react/solid';
+import NftListForUsers from "@ui/nft/list/indexForUsers";
 
 const Home: NextPage = () => {
     const { network } = useNetwork();
@@ -19,7 +19,7 @@ const Home: NextPage = () => {
                     </p>
                 </div>
                 { network.isConnectedToNetwork ?
-                    <NftList/> :
+                    <NftListForUsers/> :
                     <div className="rounded-md bg-yellow-50 p-4 mt-10">
                         <div className="flex">
                             <div className="flex-shrink-0">
