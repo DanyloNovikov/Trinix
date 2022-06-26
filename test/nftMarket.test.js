@@ -112,7 +112,7 @@ contract('NftMarket', accounts => {
             const ownedNfts = await _contract.getOwnedNfts({from: accounts[1]});
             assert.equal(ownedNfts[0].tokenId, 1, "Nft has a wrong id");
         });
-      
+
         it("account[0] should have one owned NFT", async () => {
             const ownedNfts = await _contract.getOwnedNfts({from: accounts[0]});
             assert.equal(ownedNfts[0].tokenId, 2, "Nft has a wrong id");
@@ -181,15 +181,15 @@ contract('NftMarket', accounts => {
 
         it('!owner try get money from contract', async () => {
             try {
-                await _contract.getMoneyFromPlatform( 0.025, {from: accounts[1]});
+                await _contract.getMoneyFromPlatform(_listingPrice, {from: accounts[1],});
             } catch (error) {
                 assert(true, error);
             }
         });
 
         it('owner try get money from contract', async () => {
-            const oldCountEtherContract = await _contract.getTotalBalance({from: accounts[0]}); 
-            await _contract.getMoneyFromPlatform(_listingPrice, {from: accounts[0]});
+            const oldCountEtherContract = await _contract.getTotalBalance({from: accounts[0]});
+            await _contract.getMoneyFromPlatform(  _listingPrice, {from: accounts[0]});
             const newCountEtherContarct = await  _contract.getTotalBalance({from: accounts[0]});
 
             assert.equal(newCountEtherContarct, oldCountEtherContract - _listingPrice , 'error geting money');
